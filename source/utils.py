@@ -3,10 +3,9 @@ import h5py
 
 
 def load_h5(path, key):
-    f = h5py.File(path)
-    print(list(f.keys()))
-    d = f[key]
-    data = np.array(d)
+    with h5py.File(path) as f:
+        d = f[key]
+        data = np.array(d)
     return data
 
 
