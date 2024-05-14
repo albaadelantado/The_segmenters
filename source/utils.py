@@ -12,7 +12,10 @@ def load_h5(path, key = None):
     return data
 
 
-def save_h5(data,key,filepath, dtype = 'uint16'):
+def save_h5(data,filepath,key = 'data', dtype = 'uint16'):
+    if filepath[-3:] != '.h5':
+        # append extension
+        filepath = filepath + '.h5'
 
     with h5py.File(filepath, "w") as f:
         dset = f.create_dataset(key, data.shape, dtype=dtype)
