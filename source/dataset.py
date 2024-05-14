@@ -40,7 +40,7 @@ class AngioDataset(Dataset):
 
     # get the total number of samples
     def __len__(self):
-        return self.n_slices
+        return self.num_patches.size
 
     # fetch the training sample given its index
     def __getitem__(self, idx):
@@ -50,7 +50,7 @@ class AngioDataset(Dataset):
         img_patch = get_patch(self.vol, patch_idx, self.patch_size)
         print(img_patch.dtype, img_patch.shape)
         img_patch.squeeze().astype(np.float32)
-        mask_patch = get_patch(self.vol, patch_idx, self.patch_size)
+        mask_patch = get_patch(self.vol_label, patch_idx, self.patch_size)
 
         image = Image.fromarray(img_patch.squeeze())
         mask = Image.fromarray(mask_patch.squeeze())
