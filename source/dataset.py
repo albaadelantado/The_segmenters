@@ -15,6 +15,7 @@ class AngioDataset(Dataset):
     """A PyTorch dataset to load angio volumes and labels"""
 
     def __init__(self, name, patch_size = [1,128,128], transform=None, img_transform=None):
+        self.name = name
         self.path = (
             '/group/dl4miacourse/The_Segmenters/Data/' + name
         )  # the directory with the volume
@@ -22,7 +23,7 @@ class AngioDataset(Dataset):
         self.vol_label = load_h5(self.path + '_label.h5' ) 
 
         self.patch_size = patch_size
-        self.num_patches = np.ceil(np.array(self.vol.shape) / np.array(self.patch_size)).astype(int)
+        self.n_patch_per_dim = get_n_patch_per_dim(self.vol.shape, self.patch_size) 
         self.transform = (
             transform  # transformations to apply to both inputs and targets
         )
@@ -40,16 +41,14 @@ class AngioDataset(Dataset):
 
     # get the total number of samples
     def __len__(self):
-        return self.num_patches.size
+        return np.prod(self.n_patch_per_dim)
 
     # fetch the training sample given its index
     def __getitem__(self, idx):
-
-        patch_idx = np.unravel_index(idx,self.num_patches)
+        # patch_idx is 3d, idx is linear
+        patch_idx = np.unravel_index(idx, self.n_patch_per_dim)
 
         img_patch = get_patch(self.vol, patch_idx, self.patch_size)
-        print(img_patch.dtype, img_patch.shape)
-        img_patch.squeeze().astype(np.float32)
         mask_patch = get_patch(self.vol_label, patch_idx, self.patch_size)
 
         image = Image.fromarray(img_patch.squeeze())
@@ -71,4 +70,9 @@ class AngioDataset(Dataset):
             image = self.img_transform(image)
 
 
-        return image, mask
+        if self.name == 'val' or self.name == 'test':
+            _, npslice = get_patch(self.vol, patch_idx, self.patch_size, return_slice = True)
+
+            return image, mask, npslice
+        else:
+            return image, mask

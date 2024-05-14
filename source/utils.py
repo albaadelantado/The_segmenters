@@ -36,7 +36,7 @@ def crop(x, y):
 
 
 
-def get_patch(data, patch_idx, patch_size, min_pad_ratio = 0.25): 
+def get_patch(data, patch_idx, patch_size, min_pad_ratio = 0.25, return_slice = False): 
 
     smallest_portion_dim = [s % d for s,d in zip(data.shape, patch_size)]
  
@@ -46,16 +46,36 @@ def get_patch(data, patch_idx, patch_size, min_pad_ratio = 0.25):
         
     # getting indices to slice data, from size*idx to size*(idx+1) along all dims
     init_i = np.multiply(patch_idx,patch_size)
-    end_i = np.multiply(np.add(patch_idx,1),patch_size)
+    end_i = np.add(init_i,patch_size)
 
+
+    patch_npslice = np.s_[init_i[0]:end_i[0],init_i[1]:end_i[1],init_i[2]:end_i[2]]
     # slicing to get our data, will be smaller than the patch when we go over the edges
-    portion = data[init_i[0]:end_i[0],init_i[1]:end_i[1],init_i[2]:end_i[2]]
+    portion = data[patch_npslice]
 
     # np.pad wants tuples for each axis (num_pad_elements_before, after)
     padding_size = list(zip(np.zeros(len(patch_size)).astype(int),np.subtract(patch_size,np.array(portion.shape))))
     padded = np.pad(portion,padding_size)
     
-    return padded
+    if return_slice == True:
+        return padded, patch_npslice
+    else:
+        return padded
+
+
+def get_n_patch_per_dim(vol_shape,patch_size):
+    return np.ceil(np.array(vol_shape) / np.array(patch_size)).astype(int)
+
+
+def repatch(patch_list,patch_slice_list, vol_shape):
+    init = np.zeros(vol_shape)
+
+    for patch,npslice in zip(patch_list, patch_slice_list):
+        init[npslice] = patch
+
+    return init
+
+    
 
 
 
