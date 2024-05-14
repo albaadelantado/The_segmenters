@@ -1,5 +1,7 @@
 import numpy as np
 import h5py
+import matplotlib.pyplot as plt
+
 
 
 def load_h5(path, key = None):
@@ -56,6 +58,23 @@ def get_patch(data, patch_idx, patch_size, min_pad_ratio = 0.25):
     padded = np.pad(portion,padding_size)
     
     return padded
+
+def show_random_dataset_image_with_prediction(dataset, model, device="cpu"):
+    idx = np.random.randint(0, len(dataset))  # take a random sample
+    img, mask = dataset[idx]  # get the image and the nuclei masks
+    x = img.to(device).unsqueeze(0)
+    y = model(x)[0].detach().cpu().numpy()
+    print("MSE loss:", np.mean((mask[0].numpy() - y[0]) ** 2))
+    f, axarr = plt.subplots(1, 3)  # make two plots on one figure
+    axarr[0].imshow(img[0])  # show the image
+    axarr[0].set_title("Image")
+    axarr[1].imshow(mask[0], interpolation=None)  # show the masks
+    axarr[1].set_title("Mask")
+    axarr[2].imshow(y[0], interpolation=None)  # show the prediction
+    axarr[2].set_title("Prediction")
+    _ = [ax.axis("off") for ax in axarr]  # remove the axes
+    print("Image size is %s" % {img[0].shape})
+    plt.show()
 
 
 
