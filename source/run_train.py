@@ -12,7 +12,7 @@ from utils import *
 from test import *
 
 
-print('starting')
+print('Starting')
 
 patch_size = [1,512,512]
 final_activation = "Sigmoid"
@@ -31,7 +31,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 dice = DiceCoefficient()
 n_epochs = 10
 
-modelnum = '008'
+modelnum = '009'
 
 device = torch.device("cuda") if torch.cuda.is_available else torch.device("cpu")
 
@@ -51,7 +51,7 @@ model = model.to(device)
 
 
 # set logger's parameters
-logger = SummaryWriter()
+logger = SummaryWriter(f'runs/{modelnum}')
 log_interval=1
 
 # model's training
