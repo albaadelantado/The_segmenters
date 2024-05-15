@@ -18,6 +18,18 @@ class DiceCoefficient(nn.Module):
         intersection = torch.sum(prediction*target)
         union = torch.sum(prediction)+torch.sum(target)
         return 2 * intersection / union.clamp(min=self.eps)
+
+class IoUCoefficient(nn.Module):
+    def __init__(self, eps=1e-6):
+        super().__init__()
+        self.eps = eps
+
+    # the dice coefficient of two sets represented as vectors a, b can be
+    # computed as (2 *|a b| / (a^2 + b^2))
+    def forward(self, prediction, target):
+        intersection = torch.sum(prediction*target)
+        union = torch.sum(prediction)+torch.sum(target)
+        return intersection / (union-intersection+self.eps)
     
 
 class IntersectionOverUnion():
