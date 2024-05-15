@@ -1,6 +1,9 @@
 import numpy as np
 import h5py
 import matplotlib.pyplot as plt
+import torch
+import os
+
 
 
 
@@ -98,4 +101,26 @@ def show_random_dataset_image_with_prediction(dataset, model, device="cpu"):
 
 
 
+def save_checkpoint(model, optimizer, n_epoch, path, key="checkpoint"):
+    save_path = os.path.join(path, f"{key}.pt")
+    torch.save(
+        {
+            "model":model.state_dict(),
+            "optimizer":optimizer.state_dict(),
+            "epoch": n_epoch
+        },
+        save_path
+    )
 
+
+def load_checkpoint(model, path, optimizer=None, key="checkpoint"):
+    load_path = os.path.join(path, f"{key}.pt")
+    checkpoint=torch.load(load_path)
+    model.load_state_dict(checkpoint["model"])
+
+    if optimizer:
+        optimizer.load_state_dict(checkpoint["optimizer"])
+        epoch=checkpoint["epoch"]
+        return model, optimizer, epoch
+    
+    return model
