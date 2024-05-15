@@ -22,6 +22,9 @@ class AngioDataset(Dataset):
         self.vol = load_h5(self.path + '.h5')  # get the volume
         self.vol_label = load_h5(self.path + '_label.h5' ) 
 
+        self.mean = np.mean(self.vol)
+        self.std = np.std(self.vol)
+
         self.patch_size = patch_size
         self.n_patch_per_dim = get_n_patch_per_dim(self.vol.shape, self.patch_size) 
         self.transform = (
@@ -31,10 +34,8 @@ class AngioDataset(Dataset):
         self.img_transform = img_transform  # transformations to apply to raw image only
         #  transformations to apply just to inputs
         self.inp_transforms = transforms.Compose(
-            [
-                transforms.Grayscale(),
-                transforms.ToTensor(),
-                transforms.Normalize([0.5], [0.5]),  # 0.5 = mean and 0.5 = variance
+            [   #transforms.Grayscale(),
+                transforms.ToTensor()
             ]
         )
 
@@ -48,15 +49,21 @@ class AngioDataset(Dataset):
         # patch_idx is 3d, idx is linear
         patch_idx = np.unravel_index(idx, self.n_patch_per_dim)
 
-        img_patch = get_patch(self.vol, patch_idx, self.patch_size)
-        mask_patch = get_patch(self.vol_label, patch_idx, self.patch_size)
+        img_patch = get_patch(self.vol, patch_idx, self.patch_size).squeeze()
+        mask_patch = get_patch(self.vol_label, patch_idx, self.patch_size).squeeze()
 
-        image = Image.fromarray(img_patch.squeeze())
-        mask = Image.fromarray(mask_patch.squeeze())
+        img_patch = minmaxnorm(img_patch)
 
-        image = self.inp_transforms(image)
+        #image = Image.fromarray(img_patch.squeeze())
+        #mask = Image.fromarray(mask_patch.squeeze())
 
-        mask = transforms.ToTensor()(mask)
+    
+        #image = self.inp_transforms(img_patch)
+        
+        image = torch.tensor(img_patch[np.newaxis,...].astype(np.float32))
+
+        mask = torch.tensor(mask_patch[np.newaxis,...].astype(np.uint8))
+        #mask = transforms.ToTensor()(mask_patch)
 
         if self.transform is not None:
             # Note: using seeds to ensure the same random transform is applied to

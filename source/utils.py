@@ -6,6 +6,13 @@ import os
 
 
 
+def normalize(img, eps = 1e-7):
+    return (img - np.mean(img) ) / (np.std(img) + eps)
+
+def minmaxnorm(img, eps = 1e-7):
+    return (img - np.min(img) )/ (np.max(img) - np.min(img) + eps)
+
+
 
 def load_h5(path, key = None):
 
@@ -124,13 +131,15 @@ def load_checkpoint(model, path, optimizer=None, key="checkpoint"):
     
     return model
 
-def show_output_histogram(dataset,device,model):
+def show_output_histogram(dataset,model,device):
+    model.to(device)
     idx = np.random.randint(0, len(dataset))  # take a random sample
     img, mask = dataset[idx]  # get the image and the nuclei masks
     x = img.to(device).unsqueeze(0)
     y = model(x)[0].detach().cpu().numpy()
     plt.hist(y.flatten(), bins = 300)
-    plt.xlim((-.1,.1))
+    plt.xlim((-.1,1.1))
+    plt.yscale('log')
     plt.show()
 
     s = torch.nn.Sigmoid()
