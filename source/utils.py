@@ -1,6 +1,7 @@
 import numpy as np
 import h5py
 import matplotlib.pyplot as plt
+import torch
 
 
 
@@ -50,7 +51,6 @@ def get_patch(data, patch_idx, patch_size, min_pad_ratio = 0.25, return_slice = 
     init_i = np.multiply(patch_idx,patch_size)
     end_i = np.add(init_i,patch_size)
 
-
     patch_npslice = np.s_[init_i[0]:end_i[0],init_i[1]:end_i[1],init_i[2]:end_i[2]]
     # slicing to get our data, will be smaller than the patch when we go over the edges
     portion = data[patch_npslice]
@@ -60,7 +60,7 @@ def get_patch(data, patch_idx, patch_size, min_pad_ratio = 0.25, return_slice = 
     padded = np.pad(portion,padding_size)
     
     if return_slice == True:
-        return padded, patch_npslice
+        return padded, [init_i, end_i]
     else:
         return padded
 
@@ -98,4 +98,16 @@ def show_random_dataset_image_with_prediction(dataset, model, device="cpu"):
 
 
 
+def show_output_histogram(dataset,device,model):
+    idx = np.random.randint(0, len(dataset))  # take a random sample
+    img, mask = dataset[idx]  # get the image and the nuclei masks
+    x = img.to(device).unsqueeze(0)
+    y = model(x)[0].detach().cpu().numpy()
+    plt.hist(y.flatten(), bins = 300)
+    plt.xlim((-.1,.1))
+    plt.show()
+
+    s = torch.nn.Sigmoid()
+    sy = s(torch.Tensor(y))
+    plt.imshow(sy[0,...])
 
