@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import numpy as np
 
 
 # Sorensen Dice Coefficient implemented in torch
@@ -17,3 +18,34 @@ class DiceCoefficient(nn.Module):
         intersection = torch.sum(prediction*target)
         union = torch.sum(prediction)+torch.sum(target)
         return 2 * intersection / union.clamp(min=self.eps)
+    
+
+class IntersectionOverUnion():
+
+    def __init__(self, prediction, target, eps=1e-6):
+        self.prediction = prediction
+        self.target = target
+        self.eps = eps
+    
+    def forward():
+        zero_one_pred = np.where(self.prediction>0, 1, 0)
+        zero_one_targ = np.where(self.target>0, 1, 0)
+        intersection = np.sum(zero_one_pred*zero_one_targ)
+        union = np.sum(zero_one_pred)+np.sum(zero_one_targ)
+        return intersection / (union - intersection + self.eps)
+
+class DiceIndex():
+
+    def __init__(self, prediction, target, eps=1e-6):
+        self.prediction = prediction
+        self.target = target
+        self.eps = eps
+    
+    def forward():
+        zero_one_pred = np.where(self.prediction>0, 1, 0)
+        zero_one_targ = np.where(self.target>0, 1, 0)
+        intersection = np.sum(zero_one_pred*zero_one_targ)
+        union = np.sum(zero_one_pred)+np.sum(zero_one_targ)
+        return (2*intersection) / (union + self.eps)
+
+
