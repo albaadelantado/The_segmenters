@@ -66,7 +66,7 @@ class AngioDataset(Dataset):
         img_patch = minmaxnorm(img_patch)
         image = torch.tensor(img_patch[np.newaxis,...].astype(np.float32))
 
-        mask = transforms.ToTensor()(mask)
+        mask = torch.tensor(mask_patch[np.newaxis,...].astype(np.uint8))
 
         if self.transform is not None:
             # Note: using seeds to ensure the same random transform is applied to
