@@ -23,7 +23,7 @@ from utils import save_checkpoint
 
 def run_training(model, optimizer, metric, 
                  n_epochs, train_loader, val_loader, loss_function,
-                 log_interval, logger, device, path, key="checkpoint"):
+                 log_interval, logger, device,key="checkpoint", path=""):
     # Use the unet you expect to work the best!
     model = model.to(device)
 
@@ -52,5 +52,6 @@ def run_training(model, optimizer, metric,
         step = epoch * len(train_loader)
         # validate
         validate(model, val_loader, loss_function, metric, step=step, tb_logger=logger)
-        save_checkpoint(model, optimizer, epoch, path, key)
+        if len(path)>0:
+            save_checkpoint(model, optimizer, epoch, path, key)
 
