@@ -13,7 +13,8 @@ checkpoint_path = '/group/dl4miacourse/The_Segmenters/Checkpoints'
 checkpoint_key = '001'
 save_path = '/group/dl4miacourse/The_Segmenters/Predictions/' + checkpoint_key
 
-patch_size = [1,512,512]
+patch_dim = 512 
+patch_size = [1,patch_dim,patch_dim]
 
 model = UNet(depth=4, in_channels=1, out_channels=1, final_activation=None)
 model = load_checkpoint(model, checkpoint_path, optimizer=None, key='checkpoint' + checkpoint_key)
