@@ -45,16 +45,26 @@ class AngioDataset(Dataset):
 
     # fetch the training sample given its index
     def __getitem__(self, idx):
-        # patch_idx is 3d, idx is linear
-        patch_idx = np.unravel_index(idx, self.n_patch_per_dim)
 
-        img_patch = get_patch(self.vol, patch_idx, self.patch_size)
-        mask_patch = get_patch(self.vol_label, patch_idx, self.patch_size)
+        c = True
+        while  c:
+            # patch_idx is 3d, idx is linear
+            patch_idx = np.unravel_index(idx, self.n_patch_per_dim)
+            mask_patch = get_patch(self.vol_label, patch_idx, self.patch_size).squeeze()
 
-        image = Image.fromarray(img_patch.squeeze())
-        mask = Image.fromarray(mask_patch.squeeze())
+            c = (np.sum(mask_patch) < (0.0001 * np.prod(mask_patch.shape))) and self.name == 'train'
+            #print(np.sum(mask_patch) < (0.0001 * np.prod(mask_patch.shape)))
+            idx = np.random.randint(0,np.prod(self.n_patch_per_dim))
+            
 
-        image = self.inp_transforms(image)
+        #image = Image.fromarray(img_patch.squeeze())
+        #mask = Image.fromarray(mask_patch.squeeze())
+
+    
+        #image = self.inp_transforms(img_patch)
+        img_patch = get_patch(self.vol, patch_idx, self.patch_size).squeeze()
+        img_patch = minmaxnorm(img_patch)
+        image = torch.tensor(img_patch[np.newaxis,...].astype(np.float32))
 
         mask = transforms.ToTensor()(mask)
 
