@@ -70,9 +70,9 @@ class AngioDataset(Dataset):
             image = self.img_transform(image)
 
 
-        if self.name == 'val' or self.name == 'test':
+        if self.name == 'test':
             _, npslice = get_patch(self.vol, patch_idx, self.patch_size, return_slice = True)
 
-            return image, mask, npslice
+            return image, mask, [npslice]
         else:
             return image, mask
