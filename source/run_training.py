@@ -16,7 +16,7 @@ import torch.nn as nn
 
 #from imageio import imread
 #from tqdm import tqdm, trange
-from test import validate
+from validation import validate
 from train import train
 
 
