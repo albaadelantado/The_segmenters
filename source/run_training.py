@@ -60,15 +60,15 @@ def run_training(model, optimizer, metric,
 
         if lr_scheduler_flag:
             lr_scheduler.step(current_loss)
+            logger.add_scalar(tag="lr", scalar_value=lr_scheduler.get_last_lr()[0], global_step=step
+            )
+        
 
         if len(path)>0:
             save_checkpoint(model, optimizer, epoch, path, key)
 
 
-        logger.add_scalar(
-                tag="lr", scalar_value=lr_scheduler.get_last_lr()[0], global_step=step
-            )
-        
+
 
 
 
