@@ -39,7 +39,7 @@ class IntersectionOverUnion():
         self.target = target
         self.eps = eps
     
-    def forward():
+    def forward(self):
         zero_one_pred = np.where(self.prediction>0, 1, 0)
         zero_one_targ = np.where(self.target>0, 1, 0)
         intersection = np.sum(zero_one_pred*zero_one_targ)
@@ -53,7 +53,7 @@ class DiceIndex():
         self.target = target
         self.eps = eps
     
-    def forward():
+    def forward(self):
         zero_one_pred = np.where(self.prediction>0, 1, 0)
         zero_one_targ = np.where(self.target>0, 1, 0)
         intersection = np.sum(zero_one_pred*zero_one_targ)
