@@ -29,7 +29,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
 # set metrics
 dice = DiceCoefficient()
-n_epochs = 10
+n_epochs = 15
 
 modelnum = '009'
 
