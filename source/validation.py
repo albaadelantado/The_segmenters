@@ -70,3 +70,5 @@ def validate(
             val_loss, val_metric
         )
     )
+
+    return val_loss
