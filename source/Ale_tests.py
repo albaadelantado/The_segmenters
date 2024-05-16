@@ -15,7 +15,7 @@ test_dataset = AngioDataset('test',patch_size=patch_size)
 test_loader = DataLoader(test_dataset, batch_size=1)
 
 #Indicate key
-my_key = 'Ale_212'
+my_key = 'Ale_213'
 
 #Indicate checkpoint path
 checkpoint_path = '/group/dl4miacourse/The_Segmenters/Checkpoints'
