@@ -71,9 +71,9 @@ class AngioDataset(Dataset):
             # the image and mask
             seed = torch.seed()
             torch.manual_seed(seed)
-            image = self.transform[0](image)
+            image = self.transform(image)
             torch.manual_seed(seed)
-            mask = self.transform[0](mask)
+            mask = self.transform(mask)
         if self.img_transform is not None:
             image = self.img_transform[0](image)
 
