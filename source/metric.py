@@ -59,5 +59,3 @@ class DiceIndex():
         intersection = np.sum(zero_one_pred*zero_one_targ)
         union = np.sum(zero_one_pred)+np.sum(zero_one_targ)
         return (2*intersection) / (union + self.eps)
-
-
