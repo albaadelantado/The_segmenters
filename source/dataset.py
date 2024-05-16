@@ -24,9 +24,8 @@ class AngioDataset(Dataset):
 
         self.patch_size = patch_size
         self.n_patch_per_dim = get_n_patch_per_dim(self.vol.shape, self.patch_size) 
-        self.transform = (
-            transform  # transformations to apply to both inputs and targets
-        )
+        self.transform = transform  # transformations to apply to both inputs and targets
+
 
         self.img_transform = img_transform  # transformations to apply to raw image only
         #  transformations to apply just to inputs
@@ -60,9 +59,8 @@ class AngioDataset(Dataset):
         #image = Image.fromarray(img_patch.squeeze())
         #mask = Image.fromarray(mask_patch.squeeze())
 
-    
-        #image = self.inp_transforms(img_patch)
         img_patch = get_patch(self.vol, patch_idx, self.patch_size).squeeze()
+        #image = self.inp_transforms(img_patch)
         img_patch = minmaxnorm(img_patch)
         image = torch.tensor(img_patch[np.newaxis,...].astype(np.float32))
 
@@ -73,11 +71,11 @@ class AngioDataset(Dataset):
             # the image and mask
             seed = torch.seed()
             torch.manual_seed(seed)
-            image = self.transform(image)
+            image = self.transform[0](image)
             torch.manual_seed(seed)
-            mask = self.transform(mask)
+            mask = self.transform[0](mask)
         if self.img_transform is not None:
-            image = self.img_transform(image)
+            image = self.img_transform[0](image)
 
 
         if self.name == 'test':
