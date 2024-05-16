@@ -25,13 +25,13 @@ import torch.optim as optim
 
 def run_training(model, optimizer, metric, 
                  n_epochs, train_loader, val_loader, loss_function,
-                 log_interval, logger, device,key="checkpoint", path="", lr_scheduler_flag = False):
+                 log_interval, logger, device,key="checkpoint", path="", lr_scheduler_flag = False, lr_kwargs={"mode":"min", "factor": 0.1, 
+                                                                                                               "patience":2}):
     # Use the unet you expect to work the best!
     model = model.to(device)
 
     if lr_scheduler_flag:
-        lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode = "min", factor = 0.1, patience = 2,
-                                                       threshold=1e-4, threshold_mode="rel")
+        lr_scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, **lr_kwargs)
     # use adam optimizer
     #optimizer = torch.optim.Adam(model.parameters())
 
