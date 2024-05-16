@@ -10,12 +10,12 @@ from test import *
 
 checkpoint_path = '/group/dl4miacourse/The_Segmenters/Checkpoints'
 
-checkpoint_key = '006'
+checkpoint_key = '012'
 save_path = '/group/dl4miacourse/The_Segmenters/Predictions/' + checkpoint_key
 
 final_activation = "Sigmoid"
 
-patch_dim = 128
+patch_dim = 512
 patch_size = [1,patch_dim,patch_dim]
 
 
@@ -25,6 +25,8 @@ model = load_checkpoint(model, checkpoint_path, optimizer=None, key='checkpoint'
 test_dataset = AngioDataset('test',patch_size=patch_size)
 test_loader = DataLoader(test_dataset, batch_size=1)
 vol = test_repatch(model, test_loader, saving_path = save_path)
+
+print(np.unique(vol))
 
 
  

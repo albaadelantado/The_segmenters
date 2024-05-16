@@ -75,6 +75,7 @@ def get_patch(data, patch_idx, patch_size, min_pad_ratio = 0.25, return_slice = 
         return padded
 
 
+
 def get_n_patch_per_dim(vol_shape,patch_size):
     return np.ceil(np.array(vol_shape) / np.array(patch_size)).astype(int)
 
@@ -154,3 +155,28 @@ def mask_array(array2mask, threshold=0.5, mask_values=(1,0), output_dtype=np.uin
         save_h5(masked_array,saving_folder, key=saving_key)
     return masked_array
     
+
+
+
+
+def compute_receptive_field(depth, kernel_size, downsample_factor):
+    fov = 1
+    downsample_factor_prod = 1
+    # encoder
+    for layer in range(depth - 1):
+        # two convolutions, each adds (kernel size - 1 ) * current downsampling level
+        fov = fov + 2 * (kernel_size - 1) * downsample_factor_prod
+        # downsampling multiplies by downsample factor
+        fov = fov * downsample_factor
+        downsample_factor_prod *= downsample_factor
+    # bottom layer just two convs
+    fov = fov + 2 * (kernel_size - 1) * downsample_factor_prod
+
+    # decoder
+    for layer in range(0, depth - 1)[::-1]:
+        # upsample
+        downsample_factor_prod /= downsample_factor
+        # two convolutions, each adds (kernel size - 1) * current downsampling level
+        fov = fov + 2 * (kernel_size - 1) * downsample_factor_prod
+
+    return fov
