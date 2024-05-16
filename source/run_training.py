@@ -66,7 +66,7 @@ def run_training(model, optimizer, metric,
 
 
         logger.add_scalar(
-                tag="lr", scalar_value=lr_scheduler.get_last_lr(), global_step=step
+                tag="lr", scalar_value=lr_scheduler.get_last_lr()[0], global_step=step
             )
         
 
